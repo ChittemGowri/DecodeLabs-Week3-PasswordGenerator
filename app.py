@@ -1,7 +1,3 @@
-"""
-VaultForge AI — DecodeLabs Internship 2026
-Chittem Gowri Sankar | Viswam Engineering College, JNTUA
-"""
 import streamlit as st
 import plotly.graph_objects as go
 import secrets, string, math, json, os, requests
@@ -14,27 +10,44 @@ HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
 html,body,[class*="css"]{font-family:'Inter',sans-serif;}
-.stApp{background:#08060f;color:#e2e8f0;}
-.hdr{background:linear-gradient(135deg,#130d28,#08060f);border:1px solid #2d1f4e;
+
+/* Clean Light Background */
+.stApp{background:#f8fafc;color:#0f172a;}
+
+/* Premium Indigo/Tech Header */
+.hdr{background:linear-gradient(135deg, #312e81, #4338ca); border:none; 
+     box-shadow: 0 10px 25px -5px rgba(67, 56, 202, 0.3);
      border-radius:14px;padding:1.5rem 2rem;margin-bottom:1.2rem;position:relative;overflow:hidden;}
-.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-              background:linear-gradient(90deg,#7c3aed,#a78bfa);}
-.hdr h1{font-size:1.8rem;font-weight:700;color:#ede9fe;margin:0;}
-.hdr p{color:#a78bfa;margin:.2rem 0 0;font-size:.85rem;}
-.pw-box{background:#0f0b1e;border:2px solid #4c1d95;border-radius:11px;
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;
+              background:linear-gradient(90deg, #06b6d4, #3b82f6);}
+.hdr h1{font-size:1.8rem;font-weight:700;color:#ffffff;margin:0;}
+.hdr p{color:#e0e7ff;margin:.2rem 0 0;font-size:.85rem;font-weight:500;}
+
+/* Crisp Password Box */
+.pw-box{background:#ffffff;border:2px solid #818cf8;border-radius:12px;
         padding:1.2rem 1.5rem;margin:1rem 0;font-family:'JetBrains Mono',monospace;
-        font-size:1.25rem;letter-spacing:.04em;color:#c4b5fd;word-break:break-all;}
+        font-size:1.25rem;font-weight:700;letter-spacing:.04em;color:#1e1b4b;
+        word-break:break-all;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);}
 .pw-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;
-          color:#6d28d9;font-family:'Inter',sans-serif;margin-bottom:.4rem;display:block;}
-.ai-box{background:linear-gradient(135deg,#08060f,#130d28);border:1px solid #4c1d95;
-         border-radius:10px;padding:1rem 1.25rem;margin-top:.8rem;}
+          color:#4f46e5;font-family:'Inter',sans-serif;margin-bottom:.4rem;display:block;font-weight:700;}
+
+/* Soft Pastel Tech AI Box */
+.ai-box{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;
+         border-radius:12px;padding:1rem 1.25rem;margin-top:.8rem;box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
 .ai-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
-           color:#a78bfa;margin-bottom:.4rem;font-weight:600;}
-.hist-row{background:#0f0b1e;border:1px solid #1f1635;border-radius:7px;
-          padding:.6rem 1rem;margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
-.stSlider>div{color:#a78bfa!important;}
+           color:#0369a1;margin-bottom:.4rem;font-weight:700;}
+
+/* Neumorphic History Rows */
+.hist-row{background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;
+          padding:.7rem 1rem;margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;
+          font-size:.85rem;color:#334155;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+
+/* Light Mode Inputs Styling */
+.stTextInput>div>div>input,.stNumberInput>div>div>input{
+  background:#ffffff!important;border:1px solid #cbd5e1!important;
+  color:#0f172a!important;border-radius:7px!important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -81,10 +94,10 @@ def gen_phrase(words=4,sep="-",cap=True,digit=True):
 def entropy(n, pool): return n*math.log2(pool) if pool>0 and n>0 else 0.0
 
 def strength(e):
-    if e<28:  return "Very Weak",  "#ef4444", 10
-    if e<40:  return "Weak",       "#f97316", 25
-    if e<60:  return "Moderate",   "#eab308", 50
-    if e<100: return "Strong",     "#22c55e", 78
+    if e<28:  return "Very Weak",   "#ef4444", 10
+    if e<40:  return "Weak",        "#f97316", 25
+    if e<60:  return "Moderate",    "#eab308", 50
+    if e<100: return "Strong",      "#22c55e", 78
     return          "Very Strong", "#10b981", 100
 
 def crack(e):
@@ -157,7 +170,7 @@ with st.sidebar:
     st.divider()
     st.markdown(f"**Entropy:** `{ent:.1f} bits`")
     st.markdown(f"**Strength:** <span style='color:{col};font-weight:700'>{nm}</span>",unsafe_allow_html=True)
-    st.markdown(f"""<div style="background:#1f1635;border-radius:5px;height:9px;overflow:hidden;margin:6px 0">
+    st.markdown(f"""<div style="background:#e2e8f0;border-radius:5px;height:9px;overflow:hidden;margin:6px 0">
         <div style="width:{pct}%;height:100%;background:{col};border-radius:5px"></div></div>""",unsafe_allow_html=True)
     st.markdown(f"**Crack:** `{crack(ent)}`")
 
@@ -178,14 +191,14 @@ with t1:
         c1,c2,c3=st.columns(3)
         c1.metric("Length",f"{len(pw)}"); c2.metric("Entropy",f"{ent:.1f} bits"); c3.metric("Strength",nm)
         st.markdown(f"**Crack time:** `{crack(ent)}`")
-        st.markdown(f"""<div style="background:#1f1635;border-radius:5px;height:10px;overflow:hidden;margin:8px 0">
+        st.markdown(f"""<div style="background:#e2e8f0;border-radius:5px;height:10px;overflow:hidden;margin:8px 0">
             <div style="width:{pct}%;height:100%;background:{strength(ent)[1]};border-radius:5px"></div></div>""",unsafe_allow_html=True)
         for w in patterns(pw): st.warning(f"⚠️ {w}")
         if api_key and st.button("🤖 AI Policy Review"):
             chk=policy(pw); fails=[r for r,p in chk if not p]
             with st.spinner():
                 r=nvidia(api_key,f"PW entropy={ent:.1f}bits, crack={crack(ent)}, failed: {fails or 'none'}. Give 3 specific tips. Under 90 words.","You are a cybersecurity expert. Be concise.")
-            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Policy Review</div><div style="color:#c4b5fd;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Policy Review</div><div style="color:#0f172a;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
 
 with t2:
     st.subheader("Diceware Passphrase")
@@ -211,7 +224,7 @@ with t3:
         ps=max(ps,len(set(test)),10); ev=entropy(len(test),ps); en,ec,ep=strength(ev)
         c1,c2,c3,c4=st.columns(4)
         c1.metric("Length",len(test)); c2.metric("Pool",ps); c3.metric("Entropy",f"{ev:.1f}"); c4.metric("Strength",en)
-        st.markdown(f"""<div style="background:#1f1635;border-radius:5px;height:10px;overflow:hidden;margin:8px 0">
+        st.markdown(f"""<div style="background:#e2e8f0;border-radius:5px;height:10px;overflow:hidden;margin:8px 0">
             <div style="width:{ep}%;height:100%;background:{ec};border-radius:5px"></div></div>""",unsafe_allow_html=True)
         st.markdown(f"**Crack time:** `{crack(ev)}`")
         chk=policy(test)
@@ -219,51 +232,4 @@ with t3:
         passed_c=sum(1 for _,p in chk if p)
         st.markdown(f"**Score: {passed_c}/{len(chk)}**")
         for w in patterns(test): st.warning(f"⚠️ {w}")
-        if api_key and st.button("🤖 Get AI Recommendations"):
-            fails=[r for r,p in chk if not p]
-            with st.spinner():
-                r=nvidia(api_key,f"PW len={len(test)}, entropy={ev:.1f}bits, crack={crack(ev)}, failed:{fails}. Give 3 improvement tips. Under 90 words.","Cybersecurity expert. Be specific.")
-            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Recommendations</div><div style="color:#c4b5fd;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
-
-with t4:
-    st.subheader("Batch Generator")
-    n=st.slider("Count",5,50,10)
-    if st.button("⚡ Generate Batch",type="primary",use_container_width=True):
-        if not any([lo,up,dg,sy]): st.error("Select classes in sidebar.")
-        else:
-            with st.spinner():
-                st.session_state.batch=[{"pw":gen_pw(length,lo,up,dg,sy,na),"ent":ent} for _ in range(n)]
-    if st.session_state.batch:
-        for i,item in enumerate(st.session_state.batch,1):
-            nm2,col2,_=strength(item["ent"])
-            st.markdown(f'<div class="hist-row"><span style="color:#4b5563">{i:>2}.</span> {item["pw"]}<span style="float:right;color:{col2}">{item["ent"]:.0f}bit · {nm2}</span></div>',unsafe_allow_html=True)
-        st.download_button("⬇️ Download","\n".join(x["pw"] for x in st.session_state.batch),"passwords.txt","text/plain")
-
-with t5:
-    st.subheader("🤖 NVIDIA AI Security Advisor")
-    if not api_key: st.warning("Enter NVIDIA API key in sidebar.")
-    else:
-        c1,c2=st.columns(2)
-        if c1.button("🎯 Security Quiz",type="primary",use_container_width=True):
-            with st.spinner():
-                r=nvidia(api_key,"One cybersecurity quiz Q about passwords, 4 options (A/B/C/D), mark answer. Format: Q\nA)...\nB)...\nC)...\nD)...\nAnswer: X","Cybersecurity educator. One clear question.")
-            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Quiz</div><div style="color:#c4b5fd;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
-        if c2.button("🛡️ 2025 Best Practices",use_container_width=True):
-            with st.spinner():
-                r=nvidia(api_key,"Top 5 password security best practices 2025-2026 per NIST SP 800-63B. Under 130 words.","Cybersecurity expert. Be current and specific.")
-            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Best Practices</div><div style="color:#c4b5fd;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
-        st.divider()
-        uq=st.text_input("Ask a security question")
-        if st.button("Ask →") and uq:
-            with st.spinner():
-                r=nvidia(api_key,uq,"Cybersecurity expert. Under 100 words.")
-            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Answer</div><div style="color:#c4b5fd;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
-
-with t6:
-    hist=load_hist()
-    if not hist: st.info("No history yet.")
-    else:
-        for h in reversed(hist):
-            nm2,col2,_=strength(h.get("entropy",0))
-            detail=f"{h.get('words',4)} words" if h["type"]=="passphrase" else f"len={h.get('length',0)}"
-            st.markdown(f'<div class="hist-row"><span style="color:#6d28d9">{h["type"].upper()}</span> · {detail} · <span style="color:{col2}">{h.get("entropy",0):.1f}bit · {nm2}</span><span style="float:right;color:#374151;font-size:.72rem">{h.get("date","")}</span></div>',unsafe_allow_html=True)
+        if api_key and st.button("🤖
