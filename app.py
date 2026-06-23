@@ -232,4 +232,51 @@ with t3:
         passed_c=sum(1 for _,p in chk if p)
         st.markdown(f"**Score: {passed_c}/{len(chk)}**")
         for w in patterns(test): st.warning(f"⚠️ {w}")
-        if api_key and st.button("🤖
+        if api_key and st.button("🤖 Get AI Recommendations"):
+            fails=[r for r,p in chk if not p]
+            with st.spinner():
+                r=nvidia(api_key,f"PW len={len(test)}, entropy={ev:.1f}bits, crack={crack(ev)}, failed:{fails}. Give 3 improvement tips. Under 90 words.","Cybersecurity expert. Be specific.")
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Recommendations</div><div style="color:#0f172a;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+
+with t4:
+    st.subheader("Batch Generator")
+    n=st.slider("Count",5,50,10)
+    if st.button("⚡ Generate Batch",type="primary",use_container_width=True):
+        if not any([lo,up,dg,sy]): st.error("Select classes in sidebar.")
+        else:
+            with st.spinner():
+                st.session_state.batch=[{"pw":gen_pw(length,lo,up,dg,sy,na),"ent":ent} for _ in range(n)]
+    if st.session_state.batch:
+        for i,item in enumerate(st.session_state.batch,1):
+            nm2,col2,_=strength(item["ent"])
+            st.markdown(f'<div class="hist-row"><span style="color:#64748b;font-weight:600;">{i:>2}.</span> <strong>{item["pw"]}</strong><span style="float:right;color:{col2};font-weight:600;">{item["ent"]:.0f}bit · {nm2}</span></div>',unsafe_allow_html=True)
+        st.download_button("⬇️ Download","\n".join(x["pw"] for x in st.session_state.batch),"passwords.txt","text/plain")
+
+with t5:
+    st.subheader("🤖 NVIDIA AI Security Advisor")
+    if not api_key: st.warning("Enter NVIDIA API key in sidebar.")
+    else:
+        c1,c2=st.columns(2)
+        if c1.button("🎯 Security Quiz",type="primary",use_container_width=True):
+            with st.spinner():
+                r=nvidia(api_key,"One cybersecurity quiz Q about passwords, 4 options (A/B/C/D), mark answer. Format: Q\nA)...\nB)...\nC)...\nD)...\nAnswer: X","Cybersecurity educator. One clear question.")
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Quiz</div><div style="color:#0f172a;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+        if c2.button("🛡️ 2025 Best Practices",use_container_width=True):
+            with st.spinner():
+                r=nvidia(api_key,"Top 5 password security best practices 2025-2026 per NIST SP 800-63B. Under 130 words.","Cybersecurity expert. Be current and specific.")
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Best Practices</div><div style="color:#0f172a;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+        st.divider()
+        uq=st.text_input("Ask a security question")
+        if st.button("Ask →") and uq:
+            with st.spinner():
+                r=nvidia(api_key,uq,"Cybersecurity expert. Under 100 words.")
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Answer</div><div style="color:#0f172a;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+
+with t6:
+    hist=load_hist()
+    if not hist: st.info("No history yet.")
+    else:
+        for h in reversed(hist):
+            nm2,col2,_=strength(h.get("entropy",0))
+            detail=f"{h.get('words',4)} words" if h["type"]=="passphrase" else f"len={h.get('length',0)}"
+            st.markdown(f'<div class="hist-row"><span style="color:#4f46e5;font-weight:700;">{h["type"].upper()}</span> · {detail} · <span style="color:{col2};font-weight:600;">{h.get("entropy",0):.1f}bit · {nm2}</span><span style="float:right;color:#94a3b8;font-size:.72rem">{h.get("date","")}</span></div>',unsafe_allow_html=True)
